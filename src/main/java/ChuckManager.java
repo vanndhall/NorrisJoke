@@ -6,18 +6,22 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 //import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Scanner;
 
 public class ChuckManager {
 
     public static void joke(){
+        String rawResponse = null;
         try{
-            System.out.println(jokeOnly(getResponse("https://api.chucknorris.io/jokes/random")));
-            System.setProperty("http.agent", "Opera");
+            rawResponse = getResponse("https://api.chucknorris.io/jokes/search?query=chees");
+
         }
         catch(Exception e){
             e.printStackTrace();
         }
+        List<NorrisJoke> list = getJokeList(rawResponse);
+        System.out.println(list.get(0).getValue());
     }
 
     private static String getResponse(String urlQueryString) throws IOException{
@@ -38,4 +42,10 @@ public class ChuckManager {
         return norrisJoke.getValue();
 
     }
+    private static List<NorrisJoke> getJokeList(String rawJSON) {
+        Gson gson = new Gson();
+        NorrisJokeList norrisJokeList = gson.fromJson(rawJSON, NorrisJokeList.class);
+        return norrisJokeList.getResult();
+    }
+
 }
